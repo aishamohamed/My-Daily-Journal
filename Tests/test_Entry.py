@@ -42,3 +42,5 @@ class TestEntry(unittest.TestCase):
     def test_set_text(self):
         self.entry.set_text("Today was a terrible day!")
         self.assertEqual(self.entry.get_text(), "Today was a terrible day!")
+
+        
