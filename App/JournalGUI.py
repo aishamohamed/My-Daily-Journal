@@ -11,32 +11,52 @@ class JournalGUI:
         self.root.title("My Journal")
 
         # Set custom background color and font
-        self.root.configure(bg="#F2F2F2")
+        self.root.configure(bg="#E6F2FF")
         self.root.option_add("*Font", "Arial 10")
 
-        self.welcome_label = tk.Label(self.root, text="Welcome to My Journal!", bg="#F2F2F2", fg="#333333", font=("Arial", 16, "bold"))
-        self.welcome_label.pack(pady=20)
+        # Adjust the window geometry
+        window_width = 800  # Set your desired width
+        window_height = 600  # Set your desired height
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        x = int((screen_width - window_width) / 2)
+        y = int((screen_height - window_height) / 2)
+        self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
-        self.menu_frame = tk.Frame(self.root, bg="#F2F2F2")
+        self.welcome_label = tk.Label(self.root, text="Welcome to My Journal!", bg="#E6F2FF", fg="#333333", font=("Arial", 16, "bold"))
+        self.welcome_label.pack(pady=20, anchor=tk.CENTER)
+
+        self.menu_frame = tk.Frame(self.root, bg="#E6F2FF")
         self.menu_frame.pack()
 
         self.new_entry_button = tk.Button(self.menu_frame, text="New Entry", command=self.open_new_entry_page, bg="#2196F3", fg="white",
                                           activebackground="#1976D2", activeforeground="white", font=("Arial", 12, "bold"))
-        self.new_entry_button.pack(side=tk.LEFT, padx=10)
+        self.new_entry_button.pack(side=tk.LEFT, padx=10, pady=10, anchor=tk.CENTER)
 
         self.search_entry_button = tk.Button(self.menu_frame, text="Search Entry", command=self.open_search_entry_page, bg="#4CAF50", fg="white",
                                              activebackground="#388E3C", activeforeground="white", font=("Arial", 12, "bold"))
-        self.search_entry_button.pack(side=tk.LEFT, padx=10)
+        self.search_entry_button.pack(side=tk.LEFT, padx=10, pady=10, anchor=tk.CENTER)
 
         self.other_functionality_button = tk.Button(self.menu_frame, text="Other Functionality", command=self.open_other_functionality_page,
                                                     bg="#F44336", fg="white", activebackground="#D32F2F", activeforeground="white",
                                                     font=("Arial", 12, "bold"))
-        self.other_functionality_button.pack(side=tk.LEFT, padx=10)
+        self.other_functionality_button.pack(side=tk.LEFT, padx=10, pady=10, anchor=tk.CENTER)
+
+
 
     def open_new_entry_page(self):
         # Create a new window for writing a new entry
         new_entry_window = tk.Toplevel(self.root)
         new_entry_window.title("New Entry")
+
+        # Adjust the window geometry
+        window_width = 600  # Set your desired width
+        window_height = 400  # Set your desired height
+        screen_width = new_entry_window.winfo_screenwidth()
+        screen_height = new_entry_window.winfo_screenheight()
+        x = int((screen_width - window_width) / 2)
+        y = int((screen_height - window_height) / 2)
+        new_entry_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
         # Set custom background color and font
         new_entry_window.configure(bg="#F2F2F2")
@@ -57,8 +77,7 @@ class JournalGUI:
 
         content_label = tk.Label(entry_frame, text="Content:", bg="#F2F2F2")
         content_label.grid(row=2, column=0, padx=5, pady=5, sticky="e")
-        content_entry = tk.Entry(entry_frame, bg="white")
-
+        content_entry = tk.Text(entry_frame, bg="white", fg="black", font=("Arial", 10), height=10, width=40)
         content_entry.grid(row=2, column=1, padx=5, pady=5, sticky="w")
 
         mood_label = tk.Label(entry_frame, text="Mood:", bg="#F2F2F2")
@@ -82,6 +101,15 @@ class JournalGUI:
         # Create a new window for searching an entry
         search_entry_window = tk.Toplevel(self.root)
         search_entry_window.title("Search Entry")
+
+        # Adjust the window geometry
+        window_width = 600  # Set your desired width
+        window_height = 400  # Set your desired height
+        screen_width = search_entry_window.winfo_screenwidth()
+        screen_height = search_entry_window.winfo_screenheight()
+        x = int((screen_width - window_width) / 2)
+        y = int((screen_height - window_height) / 2)
+        search_entry_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
         # Set custom background color and font
         search_entry_window.configure(bg="#F2F2F2")
