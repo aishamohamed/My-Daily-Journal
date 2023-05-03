@@ -21,7 +21,7 @@ class TestEntry(unittest.TestCase):
 
     
     def test_set_date(self):
-        new_date = date(2021, 5, 3)
+        new_date = date(2023, 5, 3)
         self.entry.set_date(new_date)
         self.assertEqual(self.entry.get_date(), new_date)
 
