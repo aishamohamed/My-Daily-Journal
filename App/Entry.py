@@ -21,8 +21,8 @@ class Entry:
             id (int, optional): The ID of the journal entry. Defaults to None.
         """
         self.date = date
-        self.title = title
         self.mood = mood
+        self.title = title
         self.text = text
         self.id = id
 
@@ -51,7 +51,7 @@ class Entry:
         Returns:
             datetime.date: The date of the journal entry.
         """
-        return datetime.datetime.strptime(self.date, "%Y-%m-%d").date()
+        return datetime.strptime(self.date, "%Y-%m-%d").date()
 
     def set_date(self, date):
         """Sets the date of the journal entry.
@@ -60,6 +60,21 @@ class Entry:
             date (datetime.date): The new date of the journal entry.
         """
         self.date = date
+    def set_title(self, title):
+        """Sets the title of the journal entry.
+
+        Args:
+            title (str): The new mood of the journal entry.
+        """
+        self.title = title
+    
+    def get_title(self):
+        """Returns the title of the journal entry.
+
+        Returns:
+            str: The mood of the journal entry.
+        """
+        return self.title
 
     def get_mood(self):
         """Returns the mood of the journal entry.

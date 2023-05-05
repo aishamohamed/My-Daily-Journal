@@ -1,3 +1,4 @@
+from datetime import datetime
 import tkinter as tk
 from tkinter import messagebox
 from Journal import Journal, Entry
@@ -69,6 +70,8 @@ class JournalGUI:
         date_label.grid(row=0, column=0, padx=5, pady=5, sticky="e")
         date_entry = tk.Entry(entry_frame, bg="white", fg="black", font=("Arial", 10))
         date_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+        # Populate date entry field with current date
+        date_entry.insert(tk.END, datetime.now().strftime("%Y-%m-%d"))
 
         title_label = tk.Label(entry_frame, text="Title:", bg="#F2F2F2")
         title_label.grid(row=1, column=0, padx=5, pady=5, sticky="e")
@@ -85,7 +88,7 @@ class JournalGUI:
         mood_entry = tk.Entry(entry_frame, bg="white", fg="black", font=("Arial", 10))
         mood_entry.grid(row=3, column=1, padx=5, pady=5, sticky="w")
 
-        add_button = tk.Button(new_entry_window, text="Add Entry", command=lambda: self.add_entry(date_entry.get(), title_entry.get(), content_entry.get(), mood_entry.get()),
+        add_button = tk.Button(new_entry_window, text="Add Entry", command=lambda: self.add_entry(date_entry.get(), title_entry.get(), content_entry.get("1.0", tk.END), mood_entry.get()),
                                bg="#4CAF50", fg="white", activebackground="#45A049", activeforeground="white", font=("Arial", 10, "bold"))
         add_button.pack(pady=10)
 
@@ -133,21 +136,37 @@ class JournalGUI:
         search_button.pack(pady=10)
 
     def search_entry(self, date, title):
+        entries = []
+
         if date:
-            entries = self.journal.search_entries_by_date(date)
+            entry = self.journal.get_entry_by_date(date)
+            if entry:
+                entries.append(entry)
         elif title:
-            entries = self.journal.search_entries_by_title(title)
+            entries = self.journal.get_entry_by_title(title)
         else:
             entries = []
 
         if entries:
-            messagebox.showinfo("Search Results", "Found {} entries.".format(len(entries)))
+            self.display_search_results(entries)
+        else:
+            messagebox.showinfo("Search Results", "No entries found.")
+
+    def display_search_results(self, entries):
+        if entries:
+            result = "Search Results:\n\n"
+            for entry in entries:
+                result += f"Date: {entry.get_date()}\n"
+                result += f"Title: {entry.get_title()}\n"
+                result += f"Mood: {entry.get_mood()}\n"
+                result += f"Content:\n{entry.get_text()}\n\n"
+
+            messagebox.showinfo("Search Results", result)
         else:
             messagebox.showinfo("Search Results", "No entries found.")
 
     def open_other_functionality_page(self):
         # Create a new window for other functionality
-        other_functionality_window = tk.T
         other_functionality_window = tk.Toplevel(self.root)
         other_functionality_window.title("Other Functionality")
 
@@ -155,7 +174,13 @@ class JournalGUI:
         other_functionality_window.configure(bg="#F2F2F2")
         other_functionality_window.option_add("*Font", "Arial 10")
 
-        # Add your other functionality components to the window
+        entry_listbox = tk.Listbox(other_functionality_window, bg="white", fg="black", font=("Arial", 10), width=40, height=10)
+        entry_listbox.pack(padx=20, pady=20)
+
+        entries = self.journal.get_entries()
+        for entry in entries:
+            entry_summary = f"{entry.get_title()} - {entry.get_date()}"
+            entry_listbox.insert(tk.END, entry_summary)
 
     def populate_entry_listbox(self):
         self.entry_listbox.delete(0, tk.END)
