@@ -5,7 +5,16 @@ from Journal import Journal, Entry
 
 
 class JournalGUI:
+    """
+    Graphical User Interface for the Journal application.
+    """
     def __init__(self, journal):
+        """
+        Initialize the JournalGUI.
+
+        Args:
+            journal (Journal): The Journal object to interact with.
+        """
         self.journal = journal
 
         self.root = tk.Tk()
@@ -46,7 +55,9 @@ class JournalGUI:
 
 
     def open_new_entry_page(self):
-        # Create a new window for writing a new entry
+        """
+        Open a new window for writing a new journal entry.
+        """
         new_entry_window = tk.Toplevel(self.root)
         new_entry_window.title("New Entry")
 
@@ -93,6 +104,15 @@ class JournalGUI:
         add_button.pack(pady=10)
 
     def add_entry(self, date, title, content, mood):
+        """
+        Add a new entry to the journal.
+
+        Args:
+            date (str): The date of the entry.
+            title (str): The title of the entry.
+            content (str): The content of the entry.
+            mood (str): The mood of the entry.
+        """
         if date and title and content and mood:
             entry = Entry(date, title, content, mood)
             self.journal.add_entry(entry)
@@ -100,8 +120,9 @@ class JournalGUI:
         else:
             messagebox.showerror("Error", "All fields must be filled in.")
 
+
     def open_search_entry_page(self):
-        # Create a new window for searching an entry
+        """Open a new window for searching a journal entry."""
         search_entry_window = tk.Toplevel(self.root)
         search_entry_window.title("Search Entry")
 
@@ -135,7 +156,18 @@ class JournalGUI:
                                   bg="#2196F3", fg="white", activebackground="#1976D2", activeforeground="white", font=("Arial", 10, "bold"))
         search_button.pack(pady=10)
 
+
     def search_entry(self, date, title):
+        """
+        Search for entries based on the specified date or title.
+
+        Args:
+            date (str): The date to search for in the format 'YYYY-MM-DD'.
+            title (str): The title to search for.
+
+        Returns:
+            list: A list of Entry objects representing the search results.
+        """
         entries = []
 
         if date:
@@ -152,7 +184,14 @@ class JournalGUI:
         else:
             messagebox.showinfo("Search Results", "No entries found.")
 
+
     def display_search_results(self, entries):
+        """
+        Display the search results in a message box.
+
+        Args:
+            entries (list): A list of Entry objects representing the search results.
+         """
         if entries:
             result = "Search Results:\n\n"
             for entry in entries:
@@ -165,8 +204,9 @@ class JournalGUI:
         else:
             messagebox.showinfo("Search Results", "No entries found.")
 
+
     def open_other_functionality_page(self):
-        # Create a new window for other functionality
+        """Open a new window for other functionality."""
         other_functionality_window = tk.Toplevel(self.root)
         other_functionality_window.title("Other Functionality")
 
@@ -182,13 +222,24 @@ class JournalGUI:
             entry_summary = f"{entry.get_title()} - {entry.get_date()}"
             entry_listbox.insert(tk.END, entry_summary)
 
+
     def populate_entry_listbox(self):
+        """
+        Populate the entry listbox with entries from the journal.
+        """
         self.entry_listbox.delete(0, tk.END)
         entries = self.journal.get_entries()
         for entry in entries:
             self.entry_listbox.insert(tk.END, entry.get_summary())
 
+
     def on_entry_select(self, event):
+        """
+        Handle the selection of an entry in the listbox.
+
+        Args:
+            event: The event object.
+        """
         selected_index = self.entry_listbox.curselection()
         if selected_index:
             selected_index = int(selected_index[0])
@@ -207,13 +258,17 @@ class JournalGUI:
                 self.detail_text.delete("1.0", tk.END)
                 self.detail_text.insert(tk.END, entry.get_content())  # Display full content in detail text area
 
+
     def clear_entry_fields(self):
+        """Clear the entry fields in the new entry page."""
         self.date_entry.delete(0, tk.END)
         self.title_entry.delete(0, tk.END)
         self.content_entry.delete(0, tk.END)
         self.mood_entry.delete(0, tk.END)
 
+
     def run(self):
+        """Run the Journal GUI application."""
         self.root.mainloop()
 
 
