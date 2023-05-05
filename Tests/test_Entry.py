@@ -1,6 +1,6 @@
 import unittest
 from datetime import date
-from entry import Entry
+from Entry import Entry
 
 
 class TestEntry(unittest.TestCase):
@@ -42,5 +42,14 @@ class TestEntry(unittest.TestCase):
     def test_set_text(self):
         self.entry.set_text("Today was a terrible day!")
         self.assertEqual(self.entry.get_text(), "Today was a terrible day!")
+
+    def test_set_title(self):
+        new_title = "Updated Title"
+        self.entry.set_title(new_title)
+        self.assertEqual(self.entry.get_title(), new_title)
+
+    def test_get_title(self):
+        title = self.entry.get_title()
+        self.assertEqual(title, "My Test Entry")
 
         
