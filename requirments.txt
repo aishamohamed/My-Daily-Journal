@@ -1,3 +1,4 @@
+python_version >= 3.7
 multiprocessing.context
 tkinter
 datetime

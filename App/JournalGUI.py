@@ -1,7 +1,8 @@
 from datetime import datetime
+import sqlite3
 import tkinter as tk
 from tkinter import messagebox
-from Journal import Journal, Entry
+from Journal import Journal, Entry, User
 
 
 class JournalGUI:
@@ -16,7 +17,12 @@ class JournalGUI:
             journal (Journal): The Journal object to interact with.
         """
         self.journal = journal
+        self.user = User
+        self.current_user = None 
+        self.open_login_page()
 
+    def start(self):
+        
         self.root = tk.Tk()
         self.root.title("My Journal")
 
@@ -33,24 +39,140 @@ class JournalGUI:
         y = int((screen_height - window_height) / 2)
         self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
+        self.create_welcome_label()
+        self.create_menu_frame()
+        self.create_new_entry_button()
+        self.create_search_entry_button()
+        self.create_other_functionality_button()
+
+    def create_welcome_label(self):
         self.welcome_label = tk.Label(self.root, text="Welcome to My Journal!", bg="#E6F2FF", fg="#333333", font=("Arial", 16, "bold"))
         self.welcome_label.pack(pady=20, anchor=tk.CENTER)
 
+    def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, bg="#E6F2FF")
         self.menu_frame.pack()
 
+    def create_new_entry_button(self):
         self.new_entry_button = tk.Button(self.menu_frame, text="New Entry", command=self.open_new_entry_page, bg="#2196F3", fg="white",
                                           activebackground="#1976D2", activeforeground="white", font=("Arial", 12, "bold"))
         self.new_entry_button.pack(side=tk.LEFT, padx=10, pady=10, anchor=tk.CENTER)
 
+    def create_search_entry_button(self):
         self.search_entry_button = tk.Button(self.menu_frame, text="Search Entry", command=self.open_search_entry_page, bg="#4CAF50", fg="white",
                                              activebackground="#388E3C", activeforeground="white", font=("Arial", 12, "bold"))
         self.search_entry_button.pack(side=tk.LEFT, padx=10, pady=10, anchor=tk.CENTER)
 
+    def create_other_functionality_button(self):
         self.other_functionality_button = tk.Button(self.menu_frame, text="Other Functionality", command=self.open_other_functionality_page,
                                                     bg="#F44336", fg="white", activebackground="#D32F2F", activeforeground="white",
                                                     font=("Arial", 12, "bold"))
         self.other_functionality_button.pack(side=tk.LEFT, padx=10, pady=10, anchor=tk.CENTER)
+
+    def open_login_page(self):
+        """
+        Open a new window for logging in to the journal.
+        """
+        login_window = self.root = tk.Tk()
+        login_window.title("Login")
+        
+
+        # Adjust the window geometry
+        window_width = 270  # Set your desired width
+        window_height = 200  # Set your desired height
+        screen_width = login_window.winfo_screenwidth()
+        screen_height = login_window.winfo_screenheight()
+        x = int((screen_width - window_width) / 2)
+        y = int((screen_height - window_height) / 2)
+        login_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+        # Set custom background color and font
+        login_window.configure(bg="#F2F2F2")
+        login_window.option_add("*Font", "Arial 10")
+
+        # create the login frame
+        login_frame = tk.Frame(login_window, bg="#F2F2F2")
+        login_frame.grid(row=0, column=0, padx=20, pady=10)
+
+        # create the login labels and entries
+        login_label = tk.Label(
+        login_window, text="Please log in:")
+        login_label.grid(row=1, column=0, columnspan=2)
+
+        username_label = tk.Label(login_frame, text="Username:", bg="#F2F2F2")
+        username_label.grid(row=0, column=0, padx=5, pady=5, sticky="e")
+        username_entry = tk.Entry(login_frame, bg="white", fg="black", font=("Arial", 10))
+        username_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+
+        password_label = tk.Label(login_frame, text="Password:", bg="#F2F2F2")
+        password_label.grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        password_entry = tk.Entry(login_frame, bg="white", fg="black", font=("Arial", 10), show="*")
+        password_entry.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+
+        # create the login button
+        login_button = tk.Button(login_window, text="Log In", command=lambda: self.login(username_entry.get(), password_entry.get()),
+                                  bg="#2196F3", fg="white", activebackground="#1976D2", activeforeground="white", font=("Arial", 10, "bold"))
+        login_button.grid(row=2, column=0)
+
+        # create create account button
+        create_account_button = tk.Button(login_window, text="Create account", command=self.create_user_screen,bg="#C1C1CD")
+        create_account_button.grid(row=3, column=0, padx=10,pady=10)
+        
+
+    def login(self, username, password):
+        """Attempt to login with the provided username and password."""
+        
+
+        if username and password:
+            user = self.journal.authenticate_user(username, password)
+            if user is not None:
+                self.user = user
+                messagebox.showinfo("Login", "Login successful!")
+                self.root.destroy()
+                self.start()
+                
+            else:
+                messagebox.showerror("Login", "Invalid username or password.")
+        else:
+            messagebox.showerror("Login", "Please enter a valid username and password.")
+    
+    def create_user_screen(self):
+        """Create a user registration screen."""
+        user_screen = tk.Toplevel(self.root)
+        user_screen.title("User Registration")
+        user_screen.geometry("300x200")
+
+        user_screen.configure(bg="#F2F2F2")
+        user_screen.option_add("*Font", "Arial 10")
+
+        username_label = tk.Label(user_screen, text="Username:", bg="#F2F2F2")
+        username_label.pack(pady=5)
+        username_entry = tk.Entry(user_screen, bg="white", fg="black", font=("Arial", 10))
+        username_entry.pack(pady=5)
+
+        password_label = tk.Label(user_screen, text="Password:", bg="#F2F2F2")
+        password_label.pack(pady=5)
+        password_entry = tk.Entry(user_screen, show="*", bg="white", fg="black", font=("Arial", 10))
+        password_entry.pack(pady=5)
+
+        register_button = tk.Button(user_screen, text="Register", command=lambda: self.register_user(username_entry.get(), password_entry.get()),
+                                  bg="#2196F3", fg="white", activebackground="#1976D2", activeforeground="white", font=("Arial", 10, "bold"))
+        register_button.pack(pady=10)
+
+        # create the cancel button
+        cancel_button = tk.Button(user_screen, text="Cancel", command=user_screen.destroy)
+        cancel_button.pack()
+
+    def register_user(self, username, password):
+        """Register a new user."""
+        if username and password:
+            if self.journal.add_user(username, password):
+                messagebox.showinfo("User Registration", "User registration successful.")
+            else:
+                messagebox.showerror("User Registration", "Username already exists. Please choose a different username.")
+        else:
+            messagebox.showerror("User Registration", "Please enter a valid username and password.")
+
 
 
 
@@ -99,7 +221,7 @@ class JournalGUI:
         mood_entry = tk.Entry(entry_frame, bg="white", fg="black", font=("Arial", 10))
         mood_entry.grid(row=3, column=1, padx=5, pady=5, sticky="w")
 
-        add_button = tk.Button(new_entry_window, text="Add Entry", command=lambda: self.add_entry(date_entry.get(), title_entry.get(), content_entry.get("1.0", tk.END), mood_entry.get()),
+        add_button = tk.Button(new_entry_window, text="Save Entry", command=lambda: self.add_entry(date_entry.get(), title_entry.get(), content_entry.get("1.0", tk.END), mood_entry.get()),
                                bg="#4CAF50", fg="white", activebackground="#45A049", activeforeground="white", font=("Arial", 10, "bold"))
         add_button.pack(pady=10)
 
@@ -116,10 +238,9 @@ class JournalGUI:
         if date and title and content and mood:
             entry = Entry(date, title, content, mood)
             self.journal.add_entry(entry)
-            messagebox.showinfo("Entry Added", "Entry added successfully!")
+            messagebox.showinfo("Entry saved", "Entry saved successfully!")
         else:
             messagebox.showerror("Error", "All fields must be filled in.")
-
 
     def open_search_entry_page(self):
         """Open a new window for searching a journal entry."""
