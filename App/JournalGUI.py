@@ -1,4 +1,5 @@
 from datetime import datetime
+import re
 import sqlite3
 import tkinter as tk
 from tkinter import messagebox
@@ -32,7 +33,8 @@ class JournalGUI:
     def start(self):
         
         self.root = tk.Tk()
-        self.root.title("My Journal")
+        self.root.title("My Daily Journal")
+        self.root.iconbitmap("journal_icon.ico")
 
         # Set custom background color and font
         self.root.configure(bg=self.color4)
@@ -48,15 +50,19 @@ class JournalGUI:
         self.root.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
         self.create_welcome_label()
+        self.create_discription()
         self.create_menu_frame()
         self.create_new_entry_button()
         self.create_search_entry_button()
         self.create_display_all_entries_button()
 
     def create_welcome_label(self):
-        self.welcome_label = tk.Label(self.root, text="Welcome to My Journal!", bg=self.color4, fg="#333333", font=("Arial", 16, "bold"))
+        self.welcome_label = tk.Label(self.root, text="Welcome to My Daily Journal!", bg=self.color4, fg="#333333", font=("Arial", 16, "bold"))
         self.welcome_label.pack(pady=20, anchor=tk.CENTER)
-
+    
+    def create_discription(self):
+        self.discription = tk.Label(self.root, text= "\n\nThis app allows you to write and manage your personal journal entries!\n\n choose an option below:\n", bg=self.color3, fg=(self.color1),font=("Arial", 14,"bold"))
+        self.discription.pack(pady=20, anchor=tk.CENTER)
     def create_menu_frame(self):
         self.menu_frame = tk.Frame(self.root, bg=self.color4)
         self.menu_frame.pack()
@@ -64,18 +70,18 @@ class JournalGUI:
     def create_new_entry_button(self):
         self.new_entry_button = tk.Button(self.menu_frame, text="New Entry", command=self.open_new_entry_page, bg="#2E8B57", fg="white",
                                           activebackground="#1976D2", activeforeground="white", font=("Arial", 12, "bold"))
-        self.new_entry_button.pack(side=tk.LEFT, padx=10, pady=10, anchor=tk.CENTER)
+        self.new_entry_button.pack(side=tk.TOP, padx=10, pady=10, anchor=tk.CENTER)
 
     def create_search_entry_button(self):
         self.search_entry_button = tk.Button(self.menu_frame, text="Search Entry", command=self.open_search_entry_page, bg="#4CAF50", fg="white",
                                              activebackground="#388E3C", activeforeground="white", font=("Arial", 12, "bold"))
-        self.search_entry_button.pack(side=tk.LEFT, padx=10, pady=10, anchor=tk.CENTER)
+        self.search_entry_button.pack(side=tk.TOP, padx=10, pady=10, anchor=tk.CENTER)
 
     def create_display_all_entries_button(self):
         self.other_functionality_button = tk.Button(self.menu_frame, text="Display all entries", command=self.display_all_entries,
                                                     bg="#2E2E8B", fg="white", activebackground="#2E2E8B", activeforeground="white",
                                                     font=("Arial", 12, "bold"))
-        self.other_functionality_button.pack(side=tk.LEFT, padx=10, pady=10, anchor=tk.CENTER)
+        self.other_functionality_button.pack(side=tk.TOP, padx=10, pady=10, anchor=tk.CENTER)
 
     def open_login_page(self):
         """
@@ -83,6 +89,7 @@ class JournalGUI:
         """
         login_window = self.root = tk.Tk()
         login_window.title("Login")
+        login_window.iconbitmap("journal_icon.ico")
         
 
         # Adjust the window geometry
@@ -128,8 +135,6 @@ class JournalGUI:
 
     def login(self, username, password):
         """Attempt to login with the provided username and password."""
-        
-
         if username and password:
             user = self.journal.authenticate_user(username, password)
             if user is not None:
@@ -147,27 +152,28 @@ class JournalGUI:
         """Create a user registration screen."""
         user_screen = tk.Toplevel(self.root)
         user_screen.title("User Registration")
-        user_screen.geometry("300x200")
+        user_screen.geometry("300x210")
+        user_screen.iconbitmap("journal_icon.ico")
 
-        user_screen.configure(bg="#F2F2F2")
+        user_screen.configure(bg=self.color4)
         user_screen.option_add("*Font", "Arial 10")
 
-        username_label = tk.Label(user_screen, text="Username:", bg="#F2F2F2")
+        username_label = tk.Label(user_screen, text="Username:", bg=self.color4)
         username_label.pack(pady=5)
         username_entry = tk.Entry(user_screen, bg="white", fg="black", font=("Arial", 10))
         username_entry.pack(pady=5)
 
-        password_label = tk.Label(user_screen, text="Password:", bg="#F2F2F2")
+        password_label = tk.Label(user_screen, text="Password:", bg=self.color4)
         password_label.pack(pady=5)
         password_entry = tk.Entry(user_screen, show="*", bg="white", fg="black", font=("Arial", 10))
         password_entry.pack(pady=5)
 
         register_button = tk.Button(user_screen, text="Register", command=lambda: self.register_user(username_entry.get(), password_entry.get()),
-                                  bg="#2196F3", fg="white", activebackground="#1976D2", activeforeground="white", font=("Arial", 10, "bold"))
+                                  bg=self.color3, fg="white", activebackground="#1976D2", activeforeground="white", font=("Arial", 10, "bold"))
         register_button.pack(pady=10)
 
         # create the cancel button
-        cancel_button = tk.Button(user_screen, text="Cancel", command=user_screen.destroy)
+        cancel_button = tk.Button(user_screen, text="Cancel", command=user_screen.destroy, bg="#2E2E8B")
         cancel_button.pack()
 
     def register_user(self, username, password):
@@ -186,6 +192,7 @@ class JournalGUI:
         """
         new_entry_window = tk.Toplevel(self.root)
         new_entry_window.title("New Entry")
+        new_entry_window.iconbitmap("journal_icon.ico")
 
         # Adjust the window geometry
         window_width = 800  # Set your desired width
@@ -243,7 +250,6 @@ class JournalGUI:
         if date and title and content and mood:
             entry = Entry(date, title, content, mood)
             self.journal.add_entry(entry, self.current_user)
-            print(self.journal.get_entries(self.current_user))
             messagebox.showinfo("Entry saved", "Entry saved successfully!")
             open_new_entry_page.destroy()
         else:
@@ -253,6 +259,7 @@ class JournalGUI:
         """Open a new window for searching a journal entry."""
         search_entry_window = tk.Toplevel(self.root)
         search_entry_window.title("Search Entry")
+        search_entry_window.iconbitmap("journal_icon.ico")
 
         # Adjust the window geometry
         window_width = 600  # Set your desired width
@@ -275,19 +282,15 @@ class JournalGUI:
         date_entry = tk.Entry(search_frame, bg="white", fg="black", font=("Arial", 10, "bold"))
         date_entry.grid(row=0, column=1, padx=5, pady=5, sticky="w")
         date_message = tk.Label(search_frame, text="please use this format: YYYY-MM-DD", bg= self.color4, font=("Arial", 11, "bold"))
-        date_message.grid(row=1, column=2, padx=5, pady=5)
+        date_message.grid(row=1, column=0, columnspan=2 ,padx=5, pady=(20, 5))
 
-        title_label = tk.Label(search_frame, text="Search by Title:", bg="#F2F2F2")
-        title_label.grid(row=1, column=0, padx=5, pady=5, sticky="e")
-        title_entry = tk.Entry(search_frame, bg="white", fg="black", font=("Arial", 10, "bold"))
-        title_entry.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+        search_button = tk.Button(search_entry_window, text="Search", command=lambda: self.search_entry(date_entry.get() if date_entry.get() else None), 
+                            bg="#4CAF50", fg="white", activebackground="#45A049", activeforeground="white", font=("Arial", 10, "bold"))
 
-        search_button = tk.Button(search_entry_window, text="Search", command=lambda: self.search_entry(date_entry.get() if date_entry.get() else None, title_entry.get() if title_entry.get() else None), bg="#4CAF50", fg="white", activebackground="#45A049", activeforeground="white", font=("Arial", 10, "bold"))
-
-        search_button.pack(pady=10)
+        search_button.pack(pady=10, anchor=tk.CENTER)
 
 
-    def search_entry(self, date, title):
+    def search_entry(self, date):
         """
         Search for entries based on the specified date or title.
 
@@ -301,16 +304,9 @@ class JournalGUI:
         self.journal.get_entries(self.current_user)
         entries = []
 
-        if date and title:
-            messagebox.showerror("Error", "Please search by either date or title, not both.")
-            return
-
         if date:
             date_obj = datetime.strptime(date, "%Y-%m-%d")
             entries = self.journal.get_entry_by_date(date_obj, self.current_user)
-        elif title:
-            title = ' '.join(title.split())
-            entries = self.journal.get_entry_by_title(title.strip(), self.current_user)
         else:
             entries = []
 
@@ -326,37 +322,56 @@ class JournalGUI:
 
         Args:
             entries (list): A list of Entry objects representing the search results.
-         """
+        """
         search_results_window = tk.Toplevel(self.root)
         search_results_window.title("Search Results")
+        search_results_window.iconbitmap("journal_icon.ico")
 
-        results_text = tk.Text(search_results_window, wrap=tk.WORD)
+        # Create a text widget with vertical scrollbar
+        results_text = tk.Text(search_results_window, wrap=tk.WORD, font=("Arial", 12))
+        scrollbar = tk.Scrollbar(search_results_window, command=results_text.yview)
+        results_text.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         results_text.pack(expand=True, fill=tk.BOTH)
 
+        # Define custom tag configurations for styling
+        results_text.tag_configure("title", font=("Arial", 14, "bold"), foreground="#2E8B57")
+        results_text.tag_configure("date", font=("Arial", 12, "italic"), foreground="#006400")
+        results_text.tag_configure("mood", font=("Arial", 12), foreground="#00008B")
+        results_text.tag_configure("content", font=("Arial", 12), foreground="black")
+        results_text.tag_configure("separator", font=("Arial", 10), foreground="#808080")
+
         for entry in entries:
-            results_text.insert(tk.END, f"Title: {entry.get_title()}\n")
-            results_text.insert(tk.END, f"Date: {entry.get_date().strftime('%Y-%m-%d %H:%M:%S')}\n")
-            results_text.insert(tk.END, f"Mood: {entry.get_mood()}\n")
-            results_text.insert(tk.END, f"Content:\n{entry.get_text()}\n")
-            results_text.insert(tk.END, "-" * 40 + "\n")
+            results_text.insert(tk.END, f"Title: {entry.get_mood()}\n", "title")
+            results_text.insert(tk.END, f"Date: {entry.get_date().strftime('%Y-%m-%d %H:%M:%S')}\n", "date")
+            results_text.insert(tk.END, f"Mood: {entry.get_text()}\n", "mood")
+            results_text.insert(tk.END, f"Content:\n{entry.get_title()}\n", "content")
+            results_text.insert(tk.END, "\n")  # Insert an empty line
+            results_text.insert(tk.END, "-" * 40 + "\n", "separator")
 
 
     def display_all_entries(self):
-        """Open a new window for other functionality."""
+        """Open a new window for displaying all entries by title, name and date"""
         display_all_entries = tk.Toplevel(self.root)
-        display_all_entries.title("Other Functionality")
+        display_all_entries.title("Display all entries")
+        display_all_entries.iconbitmap("journal_icon.ico")
 
         # Set custom background color and font
         display_all_entries.configure(bg=self.color3)  # Sea Green 4
         display_all_entries.option_add("*Font", "Arial 10")
 
-        entry_listbox = tk.Listbox(display_all_entries, bg=self.color1, fg=self.color2, font=("Arial", 10), width=60, height=20)  # White background, Sea Green text
-        entry_listbox.pack(padx=20, pady=20)
+        self.entry_listbox = tk.Listbox(display_all_entries, bg=self.color1, fg=self.color2, font=("Arial", 10), width=60, height=20)  # White background, Sea Green text
+        self.entry_listbox.pack(padx=20, pady=20)
+
+        self.entry_index_to_object = {}
 
         entries = self.journal.get_entries(self.current_user)  # Fetch entries for current user
-        for entry in entries:
+        for i, entry in enumerate(entries):
             entry_summary = f"Tilte: {entry.get_mood()} - {entry.get_date()}. Mood: {entry.get_text()}"
-            entry_listbox.insert(tk.END, entry_summary)
+            self.entry_listbox.insert(tk.END, entry_summary)
+            self.entry_index_to_object[i] = entry
+
+        self.entry_listbox.bind("<<ListboxSelect>>", self.on_entry_select)
 
 
     def populate_entry_listbox(self):
@@ -378,22 +393,34 @@ class JournalGUI:
         """
         selected_index = self.entry_listbox.curselection()
         if selected_index:
-            selected_index = int(selected_index[0])
-            entry = self.journal.get_entry_by_index(selected_index)
-            if entry:
-                self.date_entry.delete(0, tk.END)
-                self.title_entry.delete(0, tk.END)
-                self.content_entry.delete(0, tk.END)
-                self.mood_entry.delete(0, tk.END)
+            entry = self.entry_index_to_object[selected_index[0]]
+            
+            # Create a new window to display the entry
+            entry_window = tk.Toplevel(self.root)
+            entry_window.title("Entry Details")
+            entry_window.iconbitmap("journal_icon.ico")
 
-                self.date_entry.insert(tk.END, entry.get_date())
-                self.title_entry.insert(tk.END, entry.get_title())
-                self.content_entry.insert(tk.END, entry.get_content())
-                self.mood_entry.insert(tk.END, entry.get_mood())
+            # Create a text widget in the new window
+            entry_text = tk.Text(entry_window, wrap=tk.WORD, font=("Arial", 12), bg='#F0F0F0')
+            entry_text.pack(expand=True, fill=tk.BOTH)
 
-                self.detail_text.delete("1.0", tk.END)
-                self.detail_text.insert(tk.END, entry.get_content())  # Display full content in detail text area
+            # Define custom tag configurations for styling
+            entry_text.tag_configure("title", font=("Arial", 14, "bold"), foreground="#2E8B57")
+            entry_text.tag_configure("date", font=("Arial", 12, "italic"), foreground="#006400")
+            entry_text.tag_configure("mood", font=("Arial", 12), foreground="#00008B")
+            entry_text.tag_configure("content", font=("Arial", 12), foreground="black")
 
+            # Insert the entry details into the text widget with tags
+            entry_text.insert(tk.END, f"Title: {entry.get_mood()}\n", "title")
+            entry_text.insert(tk.END, "-" * 40 + "\n", "separator")
+            entry_text.insert(tk.END, f"Date: {entry.get_date()}\n", "date")
+            entry_text.insert(tk.END, "-" * 40 + "\n", "separator")
+            entry_text.insert(tk.END, f"Mood: {entry.get_text()}\n", "mood")
+            entry_text.insert(tk.END, "-" * 40 + "\n", "separator")
+            entry_text.insert(tk.END, f"Content:\n{entry.get_title()}\n", "content")
+
+            # Disable the text widget to make it read-only
+            entry_text.config(state=tk.DISABLED)
 
     def clear_entry_fields(self):
         """Clear the entry fields in the new entry page."""

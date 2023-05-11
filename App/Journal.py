@@ -150,21 +150,3 @@ class Journal:
             entry.set_id(row[0])
             entries.append(entry)
         return entries
-    
-    def get_entry_by_title(self, title, user):
-        """Searches entries in the database by title.
-
-        Args:
-            title (str): The title to search for.
-            user (User): The user who created the entry.
-        Returns:
-            list: A list of Entry objects matching the search criteria.
-        """
-        self.c.execute("SELECT * FROM entries WHERE user_id = ? AND title LIKE ? COLLATE NOCASE", (user.id, '%' + title + '%'))
-        rows = self.c.fetchall()
-        print(f"Retrieved rows: {rows}")
-        entries = []
-        for row in rows:
-            entry = Entry(row[1], row[2], row[3], row[4], row[0])
-            entries.append(entry)
-        return entries
