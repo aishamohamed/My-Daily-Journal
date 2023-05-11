@@ -13,7 +13,6 @@ class Journal:
         """
         self.conn = sqlite3.connect('journal.db')
         self.c = self.conn.cursor()
-        #self.c.execute("DROP TABLE IF EXISTS entries")  # Drop the existing table if it exists
         self.c.execute('''CREATE TABLE IF NOT EXISTS entries
                             (id INTEGER PRIMARY KEY AUTOINCREMENT,
                              date TEXT,
@@ -22,12 +21,14 @@ class Journal:
                              text TEXT,
                              user_id INTEGER,
                              FOREIGN KEY(user_id) REFERENCES users(id))''')
-        #self.c.execute("DROP TABLE IF EXISTS users")
         self.c.execute('''CREATE TABLE IF NOT EXISTS users
                             (id INTEGER PRIMARY KEY AUTOINCREMENT,
                              username TEXT UNIQUE,
                              password TEXT)''')
         self.conn.commit()
+    
+    def close(self):
+        self.conn.close()
 
     def add_user(self, username, password):
         """
@@ -75,10 +76,9 @@ class Journal:
         :param user: The user who created the entry.
         :type user: User
         """
-        self.c.execute("INSERT INTO entries (date, mood, title, text, user_id) VALUES (?, ?, ?, ?, ?)",
-                       (entry.get_date().strftime("%Y-%m-%d %H:%M:%S"), entry.get_mood(), entry.get_title(),entry.get_text(), user.id))
-        self.conn.commit()
-
+        with self.conn:
+            self.c.execute("INSERT INTO entries (date, mood, title, text, user_id) VALUES (?, ?, ?, ?, ?)",
+                        (entry.get_date().strftime("%Y-%m-%d %H:%M:%S"), entry.get_mood(), entry.get_title(),entry.get_text(), user.id))
 
     def remove_entry(self, entry):
         """Removes an entry from the SQLite database.
@@ -133,16 +133,23 @@ class Journal:
             date (datetime.date): The date of the entry to retrieve.
             user (User): The user who created the entry.
         Returns:
-            Entry: The retrieved entry, or None if not found.
+            list: A list of retrieved entries, or an empty list if none are found.
         """
-        date_str = date.strftime("%Y-%m-%d %H:%M:%S")
-        self.c.execute("SELECT * FROM entries WHERE date = ? AND user_id = ?", (date_str, user.id))
-        row = self.c.fetchone()
-        if row is None:
-            return None
-        entry = Entry(row[1], row[2], row[3], row[4])
-        entry.set_id(row[0])
-        return entry
+        date_str_start = date.strftime("%Y-%m-%d 00:00:00")
+        date_str_end = date.strftime("%Y-%m-%d 23:59:59")
+        self.c.execute("SELECT * FROM entries WHERE date >= ? AND date <= ? AND user_id = ?", 
+                   (date_str_start, date_str_end, user.id))
+        
+        entries = []
+        while True:
+            row = self.c.fetchone()
+            if row is None:
+                break
+            
+            entry = Entry(row[1], row[2], row[3], row[4])
+            entry.set_id(row[0])
+            entries.append(entry)
+        return entries
     
     def get_entry_by_title(self, title, user):
         """Searches entries in the database by title.
@@ -153,8 +160,9 @@ class Journal:
         Returns:
             list: A list of Entry objects matching the search criteria.
         """
-        self.c.execute("SELECT * FROM entries WHERE title LIKE ? AND user_id = ?", ('%' + title + '%', user.id))
+        self.c.execute("SELECT * FROM entries WHERE user_id = ? AND title LIKE ? COLLATE NOCASE", (user.id, '%' + title + '%'))
         rows = self.c.fetchall()
+        print(f"Retrieved rows: {rows}")
         entries = []
         for row in rows:
             entry = Entry(row[1], row[2], row[3], row[4], row[0])

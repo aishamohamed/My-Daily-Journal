@@ -51,7 +51,7 @@ class Entry:
         Returns:
             datetime.date: The date of the journal entry.
         """
-        return datetime.strptime(self.date, "%Y-%m-%d").date()
+        return datetime.strptime(self.date, "%Y-%m-%d %H:%M:%S")
 
     def set_date(self, date):
         """Sets the date of the journal entry.
