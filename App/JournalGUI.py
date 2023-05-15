@@ -31,7 +31,9 @@ class JournalGUI:
 
 
     def start(self):
-        
+        """
+        Start the GUI application.
+        """
         self.root = tk.Tk()
         self.root.title("My Daily Journal")
         self.root.iconbitmap("journal_icon.ico")
@@ -58,35 +60,61 @@ class JournalGUI:
         self.create_delete_button()
 
     def create_welcome_label(self):
+        """
+        Create the welcome label in the GUI.
+        """
         self.welcome_label = tk.Label(self.root, text="Welcome to My Daily Journal!", bg=self.color4, fg="#333333", font=("Arial", 16, "bold"))
         self.welcome_label.pack(pady=20, anchor=tk.CENTER)
+
+        #welcome user
+        greeting_label = tk.Label(self.root, text=f"Hello, {self.current_user.username}!", font=("Arial", 14, "italic", "bold"), fg="#333333", bg=self.color4)
+        greeting_label.pack()
     
     def create_discription(self):
-        self.discription = tk.Label(self.root, text= "\n\nThis app allows you to write and manage your personal journal entries!\n\n choose an option below:\n", bg=self.color3, fg=(self.color1),font=("Arial", 14,"bold"))
-        self.discription.pack(pady=20, anchor=tk.CENTER)
+        """
+        Create the description label in the GUI.
+        """
+        self.discription = tk.Label(self.root, text= "\nThis app allows you to write and manage your personal journal entries!\n\n choose an option below:\n", bg=self.color4, fg="#333333",font=("Arial", 14,"bold"))
+        self.discription.pack(pady=10, anchor=tk.CENTER)
+
     def create_menu_frame(self):
+        """
+        Create the menu frame in the GUI.
+        """
         self.menu_frame = tk.Frame(self.root, bg=self.color4)
         self.menu_frame.pack()
 
     def create_new_entry_button(self):
+        """
+        Create the "New Entry" button in the menu frame.
+        """
         self.new_entry_button = tk.Button(self.menu_frame, text="New Entry", command=self.open_new_entry_page, bg="#2E8B57", fg="white",
-                                          activebackground="#1976D2", activeforeground="white", font=("Arial", 12, "bold"))
+                                          activebackground="#1976D2", activeforeground="white", font=("Arial", 12, "bold"), width=15)
         self.new_entry_button.pack(side=tk.TOP, padx=10, pady=10, anchor=tk.CENTER)
     
     def create_delete_button(self):
+        """
+        Create the "Delete Entry" button in the menu frame.
+        """
         self.new_entry_button = tk.Button(self.menu_frame, text="Delete Entry", command=self.open_delete_entries, bg="#2E8B57", fg="white",
-                                          activebackground="#1976D2", activeforeground="white", font=("Arial", 12, "bold"))
+                                          activebackground="#1976D2", activeforeground="white", font=("Arial", 12, "bold"), width=15)
         self.new_entry_button.pack(side=tk.TOP, padx=10, pady=10, anchor=tk.CENTER)
 
     def create_search_entry_button(self):
+        """
+        Create the "Search Entry" button in the menu frame.
+        """
         self.search_entry_button = tk.Button(self.menu_frame, text="Search Entry", command=self.open_search_entry_page, bg="#4CAF50", fg="white",
-                                             activebackground="#388E3C", activeforeground="white", font=("Arial", 12, "bold"))
+                                             activebackground="#388E3C", activeforeground="white", font=("Arial", 12, "bold"), width=15)
         self.search_entry_button.pack(side=tk.TOP, padx=10, pady=10, anchor=tk.CENTER)
 
     def create_display_all_entries_button(self):
+        """
+        Create the "Display all entries" button in the menu frame.
+        """
         self.other_functionality_button = tk.Button(self.menu_frame, text="Display all entries", command=self.display_all_entries,
                                                     bg="#2E2E8B", fg="white", activebackground="#2E2E8B", activeforeground="white",
-                                                    font=("Arial", 12, "bold"))
+                                                    font=("Arial", 12, "bold"), width=15)
         self.other_functionality_button.pack(side=tk.TOP, padx=10, pady=10, anchor=tk.CENTER)
 
     def open_login_page(self):
@@ -137,10 +165,18 @@ class JournalGUI:
         # create create account button
         create_account_button = tk.Button(login_window, text="Create account", command=self.create_user_screen,bg="#2E8B57", fg="white", font=("Arial", 10, "bold"))
         create_account_button.grid(row=3, column=0, padx=10,pady=10)
-        
 
     def login(self, username, password):
-        """Attempt to login with the provided username and password."""
+        """
+        Attempt to login with the provided username and password.
+
+        Args:
+            username (str): The username to authenticate.
+            password (str): The password to authenticate.
+
+        Returns:
+            bool: True if the login is successful, False otherwise.
+        """
         if username and password:
             user = self.journal.authenticate_user(username, password)
             if user is not None:
@@ -183,7 +219,13 @@ class JournalGUI:
         cancel_button.pack()
 
     def register_user(self, username, password):
-        """Register a new user."""
+        """
+        Register a new user.
+
+        Args:
+            username (str): The username of the new user.
+            password (str): The password of the new user.
+        """
         if username and password:
             if self.journal.add_user(username, password):
                 messagebox.showinfo("User Registration", "User registration successful.")
@@ -239,7 +281,7 @@ class JournalGUI:
         mood_entry.grid(row=3, column=1, padx=5, pady=5, sticky="w")
 
         add_button = tk.Button(new_entry_window, text="Save Entry", command=lambda: self.add_entry(new_entry_window,date_entry.get(), title_entry.get(), content_entry.get("1.0", tk.END), mood_entry.get()),
-                               bg="#4CAF50", fg="white", activebackground="#45A049", activeforeground="white", font=("Arial", 10, "bold"))
+                               bg="#4CAF50", fg="white", activebackground="#45A049", activeforeground="white", font=("Arial", 10, "bold"), width=10)
         add_button.pack(pady=10)
 
     def add_entry(self, open_new_entry_page, date, title, content, mood):
@@ -298,14 +340,13 @@ class JournalGUI:
 
     def search_entry(self, date):
         """
-        Search for entries based on the specified date or title.
+        Search for entries based on the specified date.
 
         Args:
             date (str): The date to search for in the format 'YYYY-MM-DD'.
-            title (str): The title to search for.
-
-        Returns:
-            list: A list of Entry objects representing the search results.
+        
+        Raises:
+            ValueError: If no search criteria are entered.
         """
         self.journal.get_entries(self.current_user)
         entries = []
@@ -349,8 +390,11 @@ class JournalGUI:
 
         for entry in entries:
             results_text.insert(tk.END, f"Title: {entry.get_mood()}\n", "title")
+            results_text.insert(tk.END, "-" * 40 + "\n", "separator")
             results_text.insert(tk.END, f"Date: {entry.get_date().strftime('%Y-%m-%d %H:%M:%S')}\n", "date")
+            results_text.insert(tk.END, "-" * 40 + "\n", "separator")
             results_text.insert(tk.END, f"Mood: {entry.get_text()}\n", "mood")
+            results_text.insert(tk.END, "-" * 40 + "\n", "separator")
             results_text.insert(tk.END, f"Content:\n{entry.get_title()}\n", "content")
             results_text.insert(tk.END, "\n")  # Insert an empty line
             results_text.insert(tk.END, "-" * 40 + "\n", "separator")
@@ -365,6 +409,9 @@ class JournalGUI:
         # Set custom background color and font
         display_all_entries.configure(bg=self.color3)  # Sea Green 4
         display_all_entries.option_add("*Font", "Arial 10")
+
+        instruction_label = tk.Label(display_all_entries, text="Select an entry to view:", bg=self.color3, fg="black", font=("Arial", 12, "bold"))
+        instruction_label.pack(pady=10)
 
         self.entry_listbox = tk.Listbox(display_all_entries, bg=self.color1, fg=self.color2, font=("Arial", 10), width=60, height=20)  # White background, Sea Green text
         self.entry_listbox.pack(padx=20, pady=20)
@@ -392,10 +439,10 @@ class JournalGUI:
 
     def on_entry_select(self, event):
         """
-        Handle the selection of an entry in the listbox.
+        Callback function for when an entry is selected.
 
         Args:
-            event: The event object.
+            event (tk.Event): The event object containing the selected entry.
         """
         selected_index = self.entry_listbox.curselection()
         if selected_index:
@@ -429,13 +476,13 @@ class JournalGUI:
             entry_text.config(state=tk.DISABLED)
     
     def open_delete_entries(self):
-        ''' Create a new window for other functionality'''
+        """Open a new window for deleting entries."""
         self.delete_entries_window = tk.Toplevel(self.root)
         self.delete_entries_window.title("Delete Entry")
         self.delete_entries_window.iconbitmap("journal_icon.ico")
 
         # Set custom background color and font
-        self.delete_entries_window.configure(bg="#F2F2F2")
+        self.delete_entries_window.configure(bg=self.color3)
         self.delete_entries_window.option_add("*Font", "Arial 10")
 
         window_width = 600  # Set your desired width
@@ -446,15 +493,8 @@ class JournalGUI:
         y = int((screen_height - window_height) / 2)
         self.delete_entries_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
-        # Add your other functionality components to the window
-        self.delete_entries_window.configure(bg="#F2F2F2")
-        self.delete_entries_window.option_add("*Font", "Arial 10")
-
-        instruction_label = tk.Label(self.delete_entries_window, text="Select an entry to delete:", bg="#F2F2F2", fg="black", font=("Arial", 12, "bold"))
+        instruction_label = tk.Label(self.delete_entries_window, text="Select an entry to delete:", bg=self.color3, fg="black", font=("Arial", 12, "bold"))
         instruction_label.pack(pady=10)
-
-        search_frame = tk.Frame(self.delete_entries_window, bg="#F2F2F2")
-        search_frame.pack(pady=5)
 
         self.entry_listbox = tk.Listbox(self.delete_entries_window, bg="white", fg="black", font=("Arial", 10), width=75, height=25)
         self.entry_listbox.pack(pady=5)
@@ -470,12 +510,17 @@ class JournalGUI:
 
         # create the cancel button
         cancel_button = tk.Button(self.delete_entries_window, text="Cancel", command=self.delete_entries_window.destroy, bg="#2E2E8B")
-        cancel_button.pack()
+        cancel_button.pack(pady=10)
     
         
 
     def delete_entries(self, event):
-        '''Delete the selected entry'''
+        """
+        Delete the selected entry.
+
+        Raises:
+            IndexError: If no entry is selected.
+        """
         self.selected_entry = self.entry_index_to_object[self.entry_listbox.curselection()[0]]
         if self.selected_entry:
             message = f"Do you want to delete the following entry?\n Tite:{self.selected_entry.get_mood()} \n Date: {self.selected_entry.get_date()}"

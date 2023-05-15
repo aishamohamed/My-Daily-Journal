@@ -87,11 +87,9 @@ class Journal:
             Entry: The Entry object to remove from the database.
             user (User): The user who created the entry.
         """
-        if entry.get_id() is not None:
-            self.c.execute("DELETE FROM entries WHERE id = ? AND user_id = ?", (entry.get_id(),user.id))
-            self.conn.commit()
-        else:
-            print("Entry not found in the database.")
+        self.c.execute("DELETE FROM entries WHERE id = ? AND user_id = ?", (entry.get_id(),user.id))
+        self.conn.commit()
+
     
     def get_entries(self, user):
         """Retrieves a list of all entries for the given user from the SQLite database.

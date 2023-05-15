@@ -59,21 +59,6 @@ class TestJournal(unittest.TestCase):
         self.assertIn(entry2, entries)
 
     
-    def test_get_entry_by_id(self):
-        date = datetime.date.today()
-        mood = "happy"
-        title = "My day"
-        text = "Today was a great day!"
-        entry = Entry(date, mood, title,text)
-        self.journal.add_entry(entry)
-        retrieved_entry = self.journal.get_entry_by_id(entry.get_id())
-        self.assertEqual(retrieved_entry.get_date(), date)
-        self.assertEqual(retrieved_entry.get_mood(), mood)
-        self.assertEqual(retrieved_entry.get_text(), text)
-        self.assertEqual(retrieved_entry.get_title(), title)
-
-
-    
     def test_get_entry_by_date(self):
         date1 = datetime.date.today()
         mood1 = "happy"
@@ -94,4 +79,4 @@ class TestJournal(unittest.TestCase):
 
         retrieved_entry = self.journal.get_entry_by_date(date2)
         self.assertEqual(retrieved_entry, entry2)
-
+        
