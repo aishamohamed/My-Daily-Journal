@@ -1,6 +1,6 @@
 # My Daily Journal
 
-My Daily Journal is a simple journaling application built using Python and Tkinter. It allows you to write and manage journal entries, search entries by date or title, and perform other functionality related to your journal.
+My Daily Journal is a simple journaling application built using Python and Tkinter. It allows you to write and manage journal entries, search entries by date, and perform other functionality related to your journal. This app was created with ocuses on mental health FN 3.4 sustainability goal. Journaling can be a powerful tool for improving mental health as it provides an outlet for self-expression and reflection. It allows individuals to explore their thoughts and emotions, gain clarity, and identify patterns or triggers. By writting down thoughts, journaling can promote self-awareness, reduce stress, and enhance overall well-being.
 
 ## Features
 
