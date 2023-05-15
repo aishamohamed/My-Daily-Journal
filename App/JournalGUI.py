@@ -55,6 +55,7 @@ class JournalGUI:
         self.create_new_entry_button()
         self.create_search_entry_button()
         self.create_display_all_entries_button()
+        self.create_delete_button()
 
     def create_welcome_label(self):
         self.welcome_label = tk.Label(self.root, text="Welcome to My Daily Journal!", bg=self.color4, fg="#333333", font=("Arial", 16, "bold"))
@@ -69,6 +70,11 @@ class JournalGUI:
 
     def create_new_entry_button(self):
         self.new_entry_button = tk.Button(self.menu_frame, text="New Entry", command=self.open_new_entry_page, bg="#2E8B57", fg="white",
+                                          activebackground="#1976D2", activeforeground="white", font=("Arial", 12, "bold"))
+        self.new_entry_button.pack(side=tk.TOP, padx=10, pady=10, anchor=tk.CENTER)
+    
+    def create_delete_button(self):
+        self.new_entry_button = tk.Button(self.menu_frame, text="Delete Entry", command=self.open_delete_entries, bg="#2E8B57", fg="white",
                                           activebackground="#1976D2", activeforeground="white", font=("Arial", 12, "bold"))
         self.new_entry_button.pack(side=tk.TOP, padx=10, pady=10, anchor=tk.CENTER)
 
@@ -421,6 +427,73 @@ class JournalGUI:
 
             # Disable the text widget to make it read-only
             entry_text.config(state=tk.DISABLED)
+    
+    def open_delete_entries(self):
+        ''' Create a new window for other functionality'''
+        self.delete_entries_window = tk.Toplevel(self.root)
+        self.delete_entries_window.title("Delete Entry")
+        self.delete_entries_window.iconbitmap("journal_icon.ico")
+
+        # Set custom background color and font
+        self.delete_entries_window.configure(bg="#F2F2F2")
+        self.delete_entries_window.option_add("*Font", "Arial 10")
+
+        window_width = 600  # Set your desired width
+        window_height = 550  # Set your desired height
+        screen_width = self.delete_entries_window.winfo_screenwidth()
+        screen_height = self.delete_entries_window.winfo_screenheight()
+        x = int((screen_width - window_width) / 2)
+        y = int((screen_height - window_height) / 2)
+        self.delete_entries_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
+
+        # Add your other functionality components to the window
+        self.delete_entries_window.configure(bg="#F2F2F2")
+        self.delete_entries_window.option_add("*Font", "Arial 10")
+
+        instruction_label = tk.Label(self.delete_entries_window, text="Select an entry to delete:", bg="#F2F2F2", fg="black", font=("Arial", 12, "bold"))
+        instruction_label.pack(pady=10)
+
+        search_frame = tk.Frame(self.delete_entries_window, bg="#F2F2F2")
+        search_frame.pack(pady=5)
+
+        self.entry_listbox = tk.Listbox(self.delete_entries_window, bg="white", fg="black", font=("Arial", 10), width=75, height=25)
+        self.entry_listbox.pack(pady=5)
+
+        self.entry_index_to_object = {}
+        entries = self.journal.get_entries(self.current_user)  # Fetch entries for current user
+        for i, entry in enumerate(entries):
+            entry_summary = f"Title: {entry.get_mood()} - {entry.get_date()}. Mood: {entry.get_text()}"
+            self.entry_listbox.insert(tk.END, entry_summary)
+            self.entry_index_to_object[i] = entry
+
+        self.entry_listbox.bind("<<ListboxSelect>>", self.delete_entries)
+
+        # create the cancel button
+        cancel_button = tk.Button(self.delete_entries_window, text="Cancel", command=self.delete_entries_window.destroy, bg="#2E2E8B")
+        cancel_button.pack()
+    
+        
+
+    def delete_entries(self, event):
+        '''Delete the selected entry'''
+        self.selected_entry = self.entry_index_to_object[self.entry_listbox.curselection()[0]]
+        if self.selected_entry:
+            message = f"Do you want to delete the following entry?\n Tite:{self.selected_entry.get_mood()} \n Date: {self.selected_entry.get_date()}"
+            confirm = messagebox.askyesno("Delete", message)
+            if confirm:
+                self.journal.remove_entry(self.selected_entry, self.current_user)
+                messagebox.showinfo("Deletion", "Entry deleted successfully.")
+                # Refresh the listbox to reflect the deleted entry
+                self.entry_listbox.delete(0, tk.END)
+                entries = self.journal.get_entries(self.current_user)  # Fetch entries for current user
+                for i, entry in enumerate(entries):
+                    entry_summary = f"Title: {entry.get_mood()} - {entry.get_date()}. Mood: {entry.get_text()}"
+                    self.entry_listbox.insert(tk.END, entry_summary)
+                    self.entry_index_to_object[i] = entry
+            else:
+                messagebox.showinfo("Deletion", "Deletion cancelled.")
+        else:
+            messagebox.showinfo("Deletion", "No entry selected.")
 
     def clear_entry_fields(self):
         """Clear the entry fields in the new entry page."""

@@ -80,15 +80,18 @@ class Journal:
             self.c.execute("INSERT INTO entries (date, mood, title, text, user_id) VALUES (?, ?, ?, ?, ?)",
                         (entry.get_date().strftime("%Y-%m-%d %H:%M:%S"), entry.get_mood(), entry.get_title(),entry.get_text(), user.id))
 
-    def remove_entry(self, entry):
+    def remove_entry(self, entry, user):
         """Removes an entry from the SQLite database.
 
         Args:
             Entry: The Entry object to remove from the database.
-
+            user (User): The user who created the entry.
         """
-        self.c.execute("DELETE FROM entries WHERE id = ?", (entry.get_id(),))
-        self.conn.commit()
+        if entry.get_id() is not None:
+            self.c.execute("DELETE FROM entries WHERE id = ? AND user_id = ?", (entry.get_id(),user.id))
+            self.conn.commit()
+        else:
+            print("Entry not found in the database.")
     
     def get_entries(self, user):
         """Retrieves a list of all entries for the given user from the SQLite database.
@@ -109,22 +112,6 @@ class Journal:
             print(f"Invalid date value in entry with ID {row[0]}. Skipping entry.")
         return entries
 
-    def get_entry_by_id(self, entry_id, user):
-        """Get an entry from the database by its ID.
-
-        Args:
-            entry_id (int): The ID of the entry to retrieve.
-            user (User): The user who created the entry.
-        Returns:
-            Entry: The retrieved entry, or None if not found.
-        """
-        self.c.execute("SELECT * FROM entries WHERE id = ? AND user_id = ?", (entry_id, user.id))
-        row = self.c.fetchone()
-        if row:
-            entry = Entry(row[1], row[2], row[3], row[4],row[0])
-            return entry
-        else:
-            return None
 
     def get_entry_by_date(self, date, user):
         """Get an entry from the database by its date.

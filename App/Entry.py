@@ -34,7 +34,7 @@ class Entry:
         :return: The ID of the entry.
         :rtype: int
         """
-        return self._id
+        return self.id
 
     def set_id(self, entry_id):
         """
