@@ -63,18 +63,18 @@ class JournalGUI:
         """
         Create the welcome label in the GUI.
         """
-        self.welcome_label = tk.Label(self.root, text="Welcome to My Daily Journal!", bg=self.color4, fg="#333333", font=("Arial", 16, "bold"))
+        self.welcome_label = tk.Label(self.root, text="Welcome to My Daily Journal!", bg=self.color4, fg="white", font=("Arial", 18, "bold"))
         self.welcome_label.pack(pady=20, anchor=tk.CENTER)
 
         #welcome user
-        greeting_label = tk.Label(self.root, text=f"Hello, {self.current_user.username}!", font=("Arial", 14, "italic", "bold"), fg="#333333", bg=self.color4)
+        greeting_label = tk.Label(self.root, text=f"Hello, {self.current_user.username}!", font=("Arial", 16, "italic", "bold"), fg="white", bg=self.color4)
         greeting_label.pack()
     
     def create_discription(self):
         """
         Create the description label in the GUI.
         """
-        self.discription = tk.Label(self.root, text= "\nThis app allows you to write and manage your personal journal entries!\n\n choose an option below:\n", bg=self.color4, fg="#333333",font=("Arial", 14,"bold"))
+        self.discription = tk.Label(self.root, text= "\nThis app allows you to write and manage your personal journal entries!\n\n choose an option below:\n", bg=self.color4, fg="white",font=("Arial", 12,"bold"))
         self.discription.pack(pady=10, anchor=tk.CENTER)
 
     def create_menu_frame(self):
@@ -410,7 +410,7 @@ class JournalGUI:
         display_all_entries.configure(bg=self.color3)  # Sea Green 4
         display_all_entries.option_add("*Font", "Arial 10")
 
-        instruction_label = tk.Label(display_all_entries, text="Select an entry to view:", bg=self.color3, fg="black", font=("Arial", 12, "bold"))
+        instruction_label = tk.Label(display_all_entries, text="Select an entry to view:", bg=self.color3, fg="white", font=("Arial", 12, "bold"))
         instruction_label.pack(pady=10)
 
         self.entry_listbox = tk.Listbox(display_all_entries, bg=self.color1, fg=self.color2, font=("Arial", 10), width=60, height=20)  # White background, Sea Green text
@@ -493,7 +493,7 @@ class JournalGUI:
         y = int((screen_height - window_height) / 2)
         self.delete_entries_window.geometry(f"{window_width}x{window_height}+{x}+{y}")
 
-        instruction_label = tk.Label(self.delete_entries_window, text="Select an entry to delete:", bg=self.color3, fg="black", font=("Arial", 12, "bold"))
+        instruction_label = tk.Label(self.delete_entries_window, text="Select an entry to delete:", bg=self.color3, fg="white", font=("Arial", 12, "bold"))
         instruction_label.pack(pady=10)
 
         self.entry_listbox = tk.Listbox(self.delete_entries_window, bg="white", fg="black", font=("Arial", 10), width=75, height=25)
@@ -509,7 +509,7 @@ class JournalGUI:
         self.entry_listbox.bind("<<ListboxSelect>>", self.delete_entries)
 
         # create the cancel button
-        cancel_button = tk.Button(self.delete_entries_window, text="Cancel", command=self.delete_entries_window.destroy, bg="#2E2E8B")
+        cancel_button = tk.Button(self.delete_entries_window, text="Cancel", command=self.delete_entries_window.destroy, bg="#2E2E8B", fg="white")
         cancel_button.pack(pady=10)
     
         
