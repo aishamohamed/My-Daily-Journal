@@ -3,7 +3,7 @@ from tkinter import messagebox, Tk
 import tkinter as tk
 import unittest
 from JournalGUI import JournalGUI
-from Journal import Journal, Entry
+from Journal import Journal, Entry, User
 from datetime import datetime
 
 
@@ -13,8 +13,69 @@ class TestJournalGUI(unittest.TestCase):
         self.journal = Journal()  # Instantiate Journal object
         self.app = JournalGUI(self.journal)  # Instantiate JournalGUI object
         self.root = Tk()
-        self.gui.root = self.root
+        self.app.root = self.root
 
+    def test_login_successful(self):
+        # Arrange
+        username = "test_user"
+        password = "test_password"
+        self.journal.authenticate_user.return_value = User(username, password)
+
+        # Act
+        with unittest.mock.patch('tkinter.messagebox.showinfo') as mock_showinfo:
+            self.gui.login(username, password)
+
+        # Assert
+        self.journal.authenticate_user.assert_called_with(username, password)
+        mock_showinfo.assert_called_with("Login", "Login successful!")
+
+    def test_login_failed(self):
+        # Arrange
+        username = "test_user"
+        password = "test_password"
+        self.journal.authenticate_user.return_value = None
+
+        # Act
+        with unittest.mock.patch('tkinter.messagebox.showerror') as mock_showerror:
+            self.gui.login(username, password)
+
+        # Assert
+        self.journal.authenticate_user.assert_called_with(username, password)
+        mock_showerror.assert_called_with("Login", "Invalid username or password.")
+    
+    def test_create_welcome_label(self):
+        self.app.create_welcome_label()
+        self.assertIsInstance(self.app.welcome_label, tk.Label)
+        self.assertEqual(self.app.welcome_label.cget('text'), "Welcome to My Daily Journal!")
+    
+    def test_create_discription(self):
+        self.app.create_discription()
+        self.assertIsInstance(self.app.discription, tk.Label)
+        self.assertIn("This app allows you to write and manage your personal journal entries!", self.app.discription.cget('text'))
+    
+    def test_create_menu_frame(self):
+        self.app.create_menu_frame()
+        self.assertIsInstance(self.app.menu_frame, tk.Frame)
+    
+    def test_create_new_entry_button(self):
+        self.app.create_new_entry_button()
+        self.assertIsInstance(self.app.new_entry_button, tk.Button)
+        self.assertEqual(self.app.new_entry_button.cget('text'), "New Entry")
+    
+    def test_create_delete_button(self):
+        self.app.create_delete_button()
+        self.assertIsInstance(self.app.new_entry_button, tk.Button)
+        self.assertEqual(self.app.new_entry_button.cget('text'), "Delete Entry")
+    
+    def test_create_search_entry_button(self):
+        self.app.create_search_entry_button()
+        self.assertIsInstance(self.app.search_entry_button, tk.Button)
+        self.assertEqual(self.app.search_entry_button.cget('text'), "Search Entry")
+    
+    def test_create_display_all_entries_button(self):
+        self.app.create_display_all_entries_button()
+        self.assertIsInstance(self.app.other_functionality_button, tk.Button)
+        self.assertEqual(self.app.other_functionality_button.cget('text'), "Display all entries")
 
     def test_open_new_entry_page(self):
         """Test the functionality of opening a new entry page."""
